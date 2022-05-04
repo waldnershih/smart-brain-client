@@ -22,3 +22,32 @@
 	cursor: pointer;
 	color: gray;
 }
+
+.warning-label {
+	color: red;
+}
+
+.image-wrapper {
+	display: inline-block;
+	position: relative;
+}
+
+.image {
+	border-radius: 50%;
+	background: no-repeat url("http://tachyons.io/img/logo.jpg");
+	background-size: 70px;
+	pointer-events: none;
+	width: 70px;
+	height: 70px;
+	opacity: 1;
+	line-height: 90px;
+}
+
+input[type="file"] {
+	opacity: 0;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
