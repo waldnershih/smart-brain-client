@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { toggleProfileModal } from "../../store/slice/modalSlice";
+import { changeRoute } from "../../store/slice/routeSlice";
 import {
     Dropdown,
     DropdownToggle,
@@ -6,12 +9,14 @@ import {
     DropdownItem,
 } from "reactstrap";
 
-const ProfileIcon = ({ onRouteChange, toggleModal }) => {
+const ProfileIcon = () => {
+    const dispatch = useDispatch();
+
     const [isOpen, setIsOpen] = useState(false);
-    const toggle = () => setIsOpen(!isOpen);
+    const toggle = () => setIsOpen((preState) => !preState);
 
     const handleSignout = () => {
-        onRouteChange("signout");
+        dispatch(changeRoute("signout"));
         window.sessionStorage.clear();
     };
 
@@ -37,7 +42,9 @@ const ProfileIcon = ({ onRouteChange, toggleModal }) => {
                         backgroundColor: "rgba(255,255,255,0.5)",
                     }}
                 >
-                    <DropdownItem onClick={toggleModal}>
+                    <DropdownItem
+                        onClick={() => dispatch(toggleProfileModal())}
+                    >
                         View Profile
                     </DropdownItem>
                     <DropdownItem onClick={handleSignout}>Signout</DropdownItem>

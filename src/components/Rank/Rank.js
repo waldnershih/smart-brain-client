@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 
-const Rank = ({ name, entries }) => {
+const Rank = () => {
     const [emoji, setEmoji] = useState("");
-
+    const { profile } = useSelector((state) => state.profile);
+    const { name, entries } = profile;
+    console.log(profile);
     useEffect(() => {
         generateEmoji(entries);
     }, [entries]);

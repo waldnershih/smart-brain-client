@@ -1,10 +1,14 @@
 import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { toggleProfileModal } from "../../store/slice/modalSlice";
+import { updateProfile } from "../../store/slice/profileSlice";
 import "./Profile.css";
 
-const Profile = ({ loadUser, toggleModal, user }) => {
-    const { name, age, pet } = user;
-    const [userState, setUserState] = useState({ name, age, pet });
-    const [image, setImage] = useState(null);
+const Profile = () => {
+    const dispatch = useDispatch();
+    const { profile, error } = useSelector((state) => state.profile);
+    const { name, age, pet } = profile;
+    const [userProfile, setUserProfile] = useState({ name, age, pet });
     const [warningLabel, setWarningLabel] = useState({
         name: false,
         age: false,
@@ -13,17 +17,17 @@ const Profile = ({ loadUser, toggleModal, user }) => {
     const handleFormChange = (e) => {
         switch (e.target.name) {
             case "user-name":
-                return setUserState((preState) => ({
+                return setUserProfile((preState) => ({
                     ...preState,
                     name: e.target.value,
                 }));
             case "user-age":
-                return setUserState((preState) => ({
+                return setUserProfile((preState) => ({
                     ...preState,
                     age: e.target.value,
                 }));
             case "user-pet":
-                return setUserState((preState) => ({
+                return setUserProfile((preState) => ({
                     ...preState,
                     pet: e.target.value,
                 }));
@@ -40,51 +44,26 @@ const Profile = ({ loadUser, toggleModal, user }) => {
         });
     };
 
-    const getBase64 = (file, cb) => {
-        let reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = function () {
-            cb(reader.result);
-        };
-        reader.onerror = function (error) {
-            console.log("Error: ", error);
-        };
-    };
-
-    const handleImageChange = (e) => {
-        console.log("image clicked");
-
-        getBase64(e.target.files[0], (result) => {
-            if (result) {
-                setImage(result);
-                console.log(result);
-            }
-        });
-    };
-
-    const handleProfileSave = (data) => {
+    const handleProfileSave = async (data) => {
         data.age = data.age ? parseInt(data.age) : 0;
         handleWarningLabel(data);
 
         if (data.name && data.age > 0) {
             const token = window.sessionStorage.getItem("token");
-            fetch(`http://localhost:3001/profile/${user.id}`, {
-                method: "post",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: "Bearer " + token,
-                },
-                body: JSON.stringify({
-                    formInput: data,
-                }),
-            })
-                .then((res) => {
-                    if (res.status === 200 || res.status === 304) {
-                        toggleModal();
-                        loadUser({ ...user, ...data });
-                    }
+
+            await dispatch(
+                updateProfile({
+                    id: profile.id,
+                    data: {
+                        formInput: data,
+                    },
+                    token,
                 })
-                .catch((err) => console.log(err));
+            );
+
+            if (!error) {
+                dispatch(toggleProfileModal());
+            }
         }
     };
 
@@ -93,20 +72,12 @@ const Profile = ({ loadUser, toggleModal, user }) => {
             <article className="br3 ba b--black-10 mv4 w-100 w-50-m w-25-l mw6 shadow-5 center bg-white">
                 <main className="pa4 black-80 w-80">
                     <div className="image-wrapper">
-                        <div
-                            className="image"
-                            // style={{ backgroundImage: image }}
-                        />
-                        {/* <input
-                            type="file"
-                            onChange={handleImageChange}
-                            accept=".jpeg,.png,.jpg"
-                        /> */}
+                        <div className="image" />
                     </div>
-                    <h1>{userState.name ? userState.name : name}</h1>
-                    <h4>{`Image Submitted: ${user.entries}`} </h4>
+                    <h1>{userProfile.name ? userProfile.name : name}</h1>
+                    <h4>{`Image Submitted: ${profile.entries}`} </h4>
                     <p>{`Member since: ${new Date(
-                        user.joined
+                        profile.joined
                     ).toLocaleDateString()}`}</p>
                     <hr />
                     <label className="mt2 fw6" htmlFor="user-name">
@@ -118,7 +89,7 @@ const Profile = ({ loadUser, toggleModal, user }) => {
                         className="pa2 ba w-100"
                         type="text"
                         placeholder={name}
-                        value={userState.name}
+                        value={userProfile.name}
                         onChange={handleFormChange}
                     />
                     {warningLabel.name ? (
@@ -135,7 +106,7 @@ const Profile = ({ loadUser, toggleModal, user }) => {
                         type="number"
                         min="1"
                         placeholder={age}
-                        value={userState.age}
+                        value={userProfile.age}
                         name="user-age"
                         id="age"
                     />
@@ -152,7 +123,7 @@ const Profile = ({ loadUser, toggleModal, user }) => {
                         onChange={handleFormChange}
                         className="pa2 ba w-100"
                         placeholder={pet}
-                        value={userState.pet}
+                        value={userProfile.pet}
                         type="text"
                         name="user-pet"
                         id="pet"
@@ -172,19 +143,22 @@ const Profile = ({ loadUser, toggleModal, user }) => {
                     >
                         <button
                             className="b pa2 grow pointer hover-white w-40 bg-light-blue b--black-20"
-                            onClick={() => handleProfileSave(userState)}
+                            onClick={() => handleProfileSave(userProfile)}
                         >
                             Save
                         </button>
                         <button
                             className="b pa2 grow pointer hover-white w-40 bg-light-red b--black-20"
-                            onClick={toggleModal}
+                            onClick={() => dispatch(toggleProfileModal())}
                         >
                             Cancel
                         </button>
                     </div>
                 </main>
-                <div className="modal-close-btn" onClick={toggleModal}>
+                <div
+                    className="modal-close-btn"
+                    onClick={() => dispatch(toggleProfileModal())}
+                >
                     &times;
                 </div>
             </article>
