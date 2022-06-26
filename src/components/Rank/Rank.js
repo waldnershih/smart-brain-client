@@ -9,7 +9,7 @@ const Rank = ({ name, entries }) => {
 
     const generateEmoji = (entries) => {
         fetch(
-            `https://fkz9kk3z72.execute-api.us-east-1.amazonaws.com/rank?rank=${entries}`
+            `https://dlrr0m1pxj.execute-api.us-east-1.amazonaws.com/rank?rank=${entries}`
         )
             .then((res) => res.json())
             .then((data) => {

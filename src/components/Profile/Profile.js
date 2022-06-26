@@ -53,9 +53,10 @@ const Profile = ({ loadUser, toggleModal, user }) => {
 
     const handleImageChange = (e) => {
         console.log("image clicked");
-        setImage(e.target.files[0]);
+
         getBase64(e.target.files[0], (result) => {
             if (result) {
+                setImage(result);
                 console.log(result);
             }
         });
@@ -87,19 +88,20 @@ const Profile = ({ loadUser, toggleModal, user }) => {
         }
     };
 
-    console.log(image);
-
     return (
         <div className="profile-modal">
             <article className="br3 ba b--black-10 mv4 w-100 w-50-m w-25-l mw6 shadow-5 center bg-white">
                 <main className="pa4 black-80 w-80">
                     <div className="image-wrapper">
-                        <div className="image" />
-                        <input
+                        <div
+                            className="image"
+                            // style={{ backgroundImage: image }}
+                        />
+                        {/* <input
                             type="file"
                             onChange={handleImageChange}
                             accept=".jpeg,.png,.jpg"
-                        />
+                        /> */}
                     </div>
                     <h1>{userState.name ? userState.name : name}</h1>
                     <h4>{`Image Submitted: ${user.entries}`} </h4>
