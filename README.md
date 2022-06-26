@@ -1,10 +1,9 @@
 # SmartBrain-Client
 
-Final project for ZTM course
+## Arch
 
-1. Clone this repo
-2. Run `npm install`
-3. Run `npm start`
+-   App: [SmartBrain-Client](https://github.com/waldnershih/smart-brain-client)
+-   Server: [SmartBrain-API](https://github.com/waldnershih/smart-brain-server)
+-   Lambda: [SmartBrain-Serverless](https://github.com/waldnershih/smart-brain-serverless)
 
--   Notification
-    -   aws url is not valid since it is development purpose, only when run sls deploy from the Smart-Brain-AWS project
+## Final project for ZTM course
